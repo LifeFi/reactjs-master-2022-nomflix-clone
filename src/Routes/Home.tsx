@@ -68,13 +68,17 @@ const rowVariants = {
     x: -window.outerWidth - 10,
   },
 };
+
 function Home() {
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
   const [index, setIndex] = useState(0);
-  const incraseIndex = () => setIndex((prev) => prev + 1);
+  const incraseIndex = () => {
+    console.log(index);
+    setIndex((prev) => prev + 1);
+  };
   return (
     <Wrapper>
       {isLoading ? (
@@ -109,5 +113,4 @@ function Home() {
     </Wrapper>
   );
 }
-
 export default Home;
