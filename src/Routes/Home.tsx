@@ -76,7 +76,6 @@ const boxVariants = {
     transition: {
       delay: 0.5,
       duaration: 0.3,
-      type: "tween",
     },
   },
 };
