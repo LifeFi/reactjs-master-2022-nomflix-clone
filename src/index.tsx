@@ -4,6 +4,7 @@ import App from "./App";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { RecoilRoot } from "recoil";
 import { theme } from "./theme";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -60,8 +61,9 @@ table {
 body {
   font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
-  color:black;
+  color:${(props) => props.theme.white.darker};
   line-height: 1.2;
+  background-color: black;
 
 
 }
@@ -71,6 +73,8 @@ a {
 }
 `;
 
+const client = new QueryClient();
+
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 //ts에서 오류 발생해서 ! 추가함.
 //https://velog.io/@leemin/TS-TypeScript-HTMLElement
@@ -78,10 +82,12 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   //<React.StrictMode> //리스트에서 클릭시, 페이지 아동이 안되는 문제 때문에 없앰
   <RecoilRoot>
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <QueryClientProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
+    </QueryClientProvider>
   </RecoilRoot>
   // </React.StrictMode>
 );
