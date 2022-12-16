@@ -192,6 +192,7 @@ function Home() {
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
     data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -227,7 +228,13 @@ function Home() {
                       variants={boxVariants}
                       onClick={() => onBoxClicked(movie.id)}
                       transition={{ type: "tween" }}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      bgPhoto={
+                        movie.backdrop_path
+                          ? makeImagePath(movie.backdrop_path, "w500")
+                          : movie.poster_path
+                          ? makeImagePath(movie.poster_path, "w500")
+                          : "/../assets/no-image-icon-6.png"
+                      }
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
