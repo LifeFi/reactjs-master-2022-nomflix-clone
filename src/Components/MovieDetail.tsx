@@ -49,28 +49,34 @@ const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
 `;
 
-export interface IDetailProps {
+interface IMovieDetailProps {
   movieId: number;
   rowIndex?: number | string | null;
   from?: string;
+  keyword?: string;
 }
 
-function Detail({ movieId, rowIndex, from }: IDetailProps) {
+function MovieDetail({ movieId, rowIndex, from, keyword }: IMovieDetailProps) {
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { scrollY } = useScroll();
+
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
 
   const { data, isLoading } = useQuery<IMovie>(["movieDetail", movieId], () =>
     getMovie(movieId)
   );
 
   const onOverlayClick = () => {
-    history.push("/");
+    from === "tv" && history.push("/tv");
+    from === "search" && history.push(`/search?keyword=${keyword}`);
+    from === "home" && history.push("/");
+    !from && history.push("/");
   };
 
   const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    data?.id === +bigMovieMatch.params.movieId &&
+    // bigMovieMatch?.params.movieId &&
+    // data?.id === +bigMovieMatch.params.movieId &&
+    // data;
     data;
 
   return (
@@ -107,4 +113,4 @@ function Detail({ movieId, rowIndex, from }: IDetailProps) {
   );
 }
 
-export default Detail;
+export default MovieDetail;

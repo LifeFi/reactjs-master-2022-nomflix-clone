@@ -5,14 +5,14 @@ import {
   getMoviesLatest,
   getMoviesTopRated,
   getMoviesUpcoming,
-  IGetMoviesResult,
-  IMovie,
+  IGetVideosResult,
+  IVideo,
 } from "../api";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Banner from "../Components/Banner";
 import Slider from "../Components/Slider";
-import Detail from "../Components/Detail";
+import MovieDetail from "../Components/MovieDetail";
 
 const Wrapper = styled.div`
   background: black;
@@ -31,13 +31,13 @@ function Home() {
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
 
   const { data: dataLatest, isLoading: isLoadingLatest } =
-    useQuery<IGetMoviesResult>(["movies", "Latest"], getMoviesLatest);
+    useQuery<IGetVideosResult>(["movies", "Latest"], getMoviesLatest);
 
   const { data: dataTopRated, isLoading: isLoadingTopRated } =
-    useQuery<IGetMoviesResult>(["movies", "TopRated"], getMoviesTopRated);
+    useQuery<IGetVideosResult>(["movies", "TopRated"], getMoviesTopRated);
 
   const { data: dataUpcoming, isLoading: isLoadingUpcoming } =
-    useQuery<IGetMoviesResult>(["movies", "Upcoming"], getMoviesUpcoming);
+    useQuery<IGetVideosResult>(["movies", "Upcoming"], getMoviesUpcoming);
 
   const [rowIndex, setRowIndex] = useState<number | null>(null);
 
@@ -52,31 +52,36 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner movie={dataLatest?.results[0] as IMovie}></Banner>
+          <Banner video={dataLatest?.results[0] as IVideo}></Banner>
           <Slider
             title="Latest Movies"
-            data={dataLatest as IGetMoviesResult}
+            from="home"
+            data={dataLatest as IGetVideosResult}
             rowIndex={0}
             onBoxClicked={onBoxClicked}
           ></Slider>
           <Slider
             title="Top Rated Movies"
-            data={dataTopRated as IGetMoviesResult}
+            from="home"
+            data={dataTopRated as IGetVideosResult}
             rowIndex={1}
             onBoxClicked={onBoxClicked}
           ></Slider>
           <Slider
             title="Upcoming Movies"
-            data={dataUpcoming as IGetMoviesResult}
+            from="home"
+            data={dataUpcoming as IGetVideosResult}
             rowIndex={2}
             onBoxClicked={onBoxClicked}
           ></Slider>
 
           <AnimatePresence>
+            <>{console.log(bigMovieMatch)}</>
             {bigMovieMatch ? (
-              <Detail
+              <MovieDetail
                 movieId={Number(bigMovieMatch?.params.movieId)}
                 rowIndex={rowIndex}
+                from="home"
               />
             ) : null}
           </AnimatePresence>

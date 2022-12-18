@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { IMovie } from "../api";
+import { IVideo } from "../api";
 import { makeImagePath } from "../utils";
 // import { motion } from "framer-motion";
 // import { useHistory } from "react-router-dom";
@@ -25,11 +25,11 @@ const Overview = styled.p`
   width: 50%;
 `;
 
-function Banner({ movie }: { movie: IMovie }) {
+function Banner({ video }: { video: IVideo }) {
   return (
-    <BannerItems bgPhoto={makeImagePath(movie?.backdrop_path || "")}>
-      <Title>{movie.title}</Title>
-      <Overview>{movie.overview}</Overview>
+    <BannerItems bgPhoto={makeImagePath(video?.backdrop_path || "")}>
+      <Title>{video.title && video.name}</Title>
+      <Overview>{video.overview}</Overview>
     </BannerItems>
   );
 }

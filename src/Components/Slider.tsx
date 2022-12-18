@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { makeImagePath, useWindowDimensions } from "../utils";
 import { useState } from "react";
-import { IGetMoviesResult } from "../api";
+import { IGetVideosResult } from "../api";
 
 const SliderWrapper = styled.div`
   position: relative;
@@ -132,13 +132,14 @@ const infoVariants = {
 const offset = 6;
 
 interface ISliderProps {
-  data: IGetMoviesResult;
+  data: IGetVideosResult;
   title: string;
+  from?: string;
   rowIndex: number;
   onBoxClicked: (moiveId: number, rowIndex: number) => void;
 }
 
-function Slider({ data, title, rowIndex, onBoxClicked }: ISliderProps) {
+function Slider({ data, title, from, rowIndex, onBoxClicked }: ISliderProps) {
   const width = useWindowDimensions();
 
   const [index, setIndex] = useState<number[]>([0, 0, 0, 0]);
@@ -191,7 +192,7 @@ function Slider({ data, title, rowIndex, onBoxClicked }: ISliderProps) {
           custom={custom}
         >
           {data?.results
-            .slice(1) // rowIndex 1인지에 따라서 분기한다. or 미리 바깥에서 잘라서 보낸다.
+            .slice(rowIndex === 0 ? 1 : 0) // rowIndex 1인지에 따라서 분기한다. or 미리 바깥에서 잘라서 보낸다.
             .slice(offset * index[rowIndex], offset * index[rowIndex] + offset)
             .map((movie) => (
               <Box

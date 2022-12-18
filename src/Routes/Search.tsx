@@ -1,9 +1,12 @@
 import { useQuery } from "react-query";
 import { useLocation, useHistory, useRouteMatch } from "react-router-dom";
+import { useState } from "react";
 import styled from "styled-components";
 import { ISearchResult, searchAll } from "../api";
 import { makeImagePath } from "../utils";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import MovieDetail from "../Components/MovieDetail";
+import TvDetail from "../Components/TvDetail";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -36,6 +39,12 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   position: relative;
   box-shadow: 0px 2px 15px 0px rgba(255, 255, 255, 0.22);
   cursor: pointer;
+  span {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const MediaType = styled.div`
@@ -67,27 +76,6 @@ const Info = styled(motion.div)`
     text-align: center;
     font-size: 14px;
   }
-`;
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 50vw;
-  height: 80vh;
-  background-color: ${(props) => props.theme.black.darker};
-  box-shadow: 0px 2px 15px 0px rgba(255, 255, 255, 0.22);
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  overflow-y: scroll;
 `;
 
 const boxVariants = {
@@ -123,27 +111,30 @@ const Search = () => {
   const history = useHistory();
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
+  const id = new URLSearchParams(location.search).get("id");
+  const [type, setType] = useState("");
 
-  const movieMatch = useRouteMatch<{ movieId: string }>(
-    "/search/movies/:movieId"
-  );
-  const tvMatch = useRouteMatch<{ tvId: string }>("/search/tv/:tvId");
-  const { scrollY } = useScroll();
+  // const movieMatch = useRouteMatch<{ movieId: string }>(
+  //   "/search/movies/:movieId"
+  // );
+  // const tvMatch = useRouteMatch<{ tvId: string }>("/search/tv/:tvId");
+
   const { data, isLoading } = useQuery<ISearchResult>(["search", keyword], () =>
     searchAll(keyword)
   );
 
-  const onClickBox = (mediaType: string, searchId: number) => {
-    if (mediaType === "movie") {
-      history.push(`/search/movies/${searchId}?keyword=${keyword}`);
-    } else if (mediaType === "tv") {
-      history.push(`/search/tv/${searchId}?keyword=${keyword}`);
-    } else {
-      return;
-    }
-  };
+  const onClickBox = (type: string, searchId: number) => {
+    setType(type);
+    history.push(`/search?keyword=${keyword}&type=${type}&id=${searchId}`);
 
-  const onOverlayClick = () => history.push(`/search?keyword=${keyword}`);
+    // if (mediaType === "movie") {
+    //   history.push(`/search/movies/${searchId}?keyword=${keyword}`);
+    // } else if (mediaType === "tv") {
+    //   history.push(`/search/tv/${searchId}?keyword=${keyword}`);
+    // } else {
+    //   return;
+    // }
+  };
 
   return (
     <Wrapper>
@@ -167,20 +158,24 @@ const Search = () => {
                     bgPhoto={
                       search.backdrop_path
                         ? makeImagePath(search.backdrop_path, "w500")
-                        : makeImagePath(search.poster_path, "w500")
+                        : search.poster_path
+                        ? makeImagePath(search.poster_path, "w500")
+                        : require("../assets/no-image-icon-6.png")
                     }
+                    layoutId={search.id + "_" + 0}
                   >
                     <MediaType>
                       <span>{search.media_type}</span>
                     </MediaType>
                     <Info variants={infoVariants}>
-                      <h4>{search.title ? search.title : search.title}</h4>
+                      <h4>{search.title ? search.title : search.name}</h4>
                     </Info>
                   </Box>
                 )}
               </AnimatePresence>
             ))}
           </BoxContainer>
+
           <SearchTitle>{`Tv Show ${keyword} Search Results`}</SearchTitle>
           <BoxContainer>
             {data?.results.map((search) => (
@@ -197,56 +192,56 @@ const Search = () => {
                     bgPhoto={
                       search.backdrop_path
                         ? makeImagePath(search.backdrop_path, "w500")
-                        : makeImagePath(search.poster_path, "w500")
+                        : search.poster_path
+                        ? makeImagePath(search.poster_path, "w500")
+                        : require("../assets/no-image-icon-6.png")
                     }
+                    layoutId={search.id + "_" + 1}
                   >
                     <MediaType>
                       <span>{search.media_type}</span>
                     </MediaType>
                     <Info variants={infoVariants}>
-                      <h4>{search.title}</h4>
+                      <h4>{search.title ? search.title : search.name}</h4>
                     </Info>
-                    <h1>{"No Search results..."}</h1>
                   </Box>
                 )}
               </AnimatePresence>
             ))}
           </BoxContainer>
           <AnimatePresence>
-            {movieMatch ? (
-              <Overlay
-                onClick={onOverlayClick}
-                exit={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <BigMovie
-                  style={{
-                    top: scrollY.get() + 100,
-                    bottom: scrollY.get() + 100,
-                  }}
-                  layoutId={movieMatch.params.movieId}
-                >
-                  {/* <Detail /> */}
-                </BigMovie>
-              </Overlay>
+            {!id ? null : type === "movie" ? (
+              <MovieDetail
+                movieId={Number(id)}
+                rowIndex={0}
+                keyword={keyword + ""}
+                from="search"
+              />
+            ) : type === "tv" ? (
+              <TvDetail
+                tvId={Number(id)}
+                rowIndex={1}
+                keyword={keyword + ""}
+                from="search"
+              />
+            ) : null}
+
+            {/* {movieMatch ? (
+              <MovieDetail
+                movieId={Number(movieMatch?.params.movieId)}
+                rowIndex={0}
+                from="search"
+                keyword={keyword + ""}
+              />
             ) : null}
             {tvMatch ? (
-              <Overlay
-                onClick={onOverlayClick}
-                exit={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <BigMovie
-                  style={{
-                    top: scrollY.get() + 100,
-                    bottom: scrollY.get() + 100,
-                  }}
-                  layoutId={tvMatch.params.tvId}
-                >
-                  {/* <Detail /> */}
-                </BigMovie>
-              </Overlay>
-            ) : null}
+              <TvDetail
+                tvId={Number(tvMatch?.params.tvId)}
+                rowIndex={1}
+                from="search"
+                keyword={keyword + ""}
+              />
+            ) : null} */}
           </AnimatePresence>
         </>
       )}
