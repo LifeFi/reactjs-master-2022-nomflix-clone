@@ -16,6 +16,7 @@ const Overlay = styled(motion.div)`
 
 const BigMovie = styled(motion.div)`
   position: absolute;
+  z-index: 100;
   width: 40vw;
   height: 80vh;
   left: 0;
@@ -51,10 +52,10 @@ const BigOverview = styled.p`
 export interface IDetailProps {
   movieId: number;
   rowIndex?: number | string | null;
-  search?: string;
+  from?: string;
 }
 
-function Detail({ movieId, rowIndex, search }: IDetailProps) {
+function Detail({ movieId, rowIndex, from }: IDetailProps) {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { scrollY } = useScroll();
@@ -80,8 +81,8 @@ function Detail({ movieId, rowIndex, search }: IDetailProps) {
         animate={{ opacity: 1 }}
       />
       <BigMovie
-        style={{ top: scrollY.get() + 100 }}
-        layoutId={bigMovieMatch?.params.movieId}
+        style={{ top: scrollY.get() + 50 }}
+        layoutId={bigMovieMatch?.params.movieId + "_" + rowIndex}
       >
         {isLoading ? null : (
           <>

@@ -195,7 +195,7 @@ function Slider({ data, title, rowIndex, onBoxClicked }: ISliderProps) {
             .slice(offset * index[rowIndex], offset * index[rowIndex] + offset)
             .map((movie) => (
               <Box
-                layoutId={movie.id + ""}
+                layoutId={movie.id + "_" + rowIndex}
                 key={movie.id}
                 whileHover="hover"
                 initial="normal"

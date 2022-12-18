@@ -1,8 +1,13 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { getMovies, IGetMoviesResult, IMovie } from "../api";
-import { makeImagePath } from "../utils";
+import { AnimatePresence } from "framer-motion";
+import {
+  getMoviesLatest,
+  getMoviesTopRated,
+  getMoviesUpcoming,
+  IGetMoviesResult,
+  IMovie,
+} from "../api";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Banner from "../Components/Banner";
@@ -24,10 +29,16 @@ const Loader = styled.div`
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
-    ["movies", "nowPlaying"],
-    getMovies
-  );
+
+  const { data: dataLatest, isLoading: isLoadingLatest } =
+    useQuery<IGetMoviesResult>(["movies", "Latest"], getMoviesLatest);
+
+  const { data: dataTopRated, isLoading: isLoadingTopRated } =
+    useQuery<IGetMoviesResult>(["movies", "TopRated"], getMoviesTopRated);
+
+  const { data: dataUpcoming, isLoading: isLoadingUpcoming } =
+    useQuery<IGetMoviesResult>(["movies", "Upcoming"], getMoviesUpcoming);
+
   const [rowIndex, setRowIndex] = useState<number | null>(null);
 
   const onBoxClicked = (movieId: number, rowIndex: number) => {
@@ -37,15 +48,27 @@ function Home() {
 
   return (
     <Wrapper>
-      {isLoading ? (
+      {isLoadingLatest || isLoadingTopRated || isLoadingUpcoming ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner movie={data?.results[0] as IMovie}></Banner>
+          <Banner movie={dataLatest?.results[0] as IMovie}></Banner>
           <Slider
-            title="현재 상영중인 영화"
-            data={data as IGetMoviesResult}
+            title="Latest Movies"
+            data={dataLatest as IGetMoviesResult}
             rowIndex={0}
+            onBoxClicked={onBoxClicked}
+          ></Slider>
+          <Slider
+            title="Top Rated Movies"
+            data={dataTopRated as IGetMoviesResult}
+            rowIndex={1}
+            onBoxClicked={onBoxClicked}
+          ></Slider>
+          <Slider
+            title="Upcoming Movies"
+            data={dataUpcoming as IGetMoviesResult}
+            rowIndex={2}
             onBoxClicked={onBoxClicked}
           ></Slider>
 

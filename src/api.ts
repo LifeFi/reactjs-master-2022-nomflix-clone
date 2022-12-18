@@ -21,12 +21,6 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
-export function getMovies() {
-  return fetch(
-    `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}&region=KR&language=ko-KR`
-  ).then((response) => response.json());
-}
-
 interface ITv {
   id: number;
   backdrop_path: string;
@@ -45,6 +39,24 @@ export interface IGetTvsResult {
 export interface ISearchResult {
   page: number;
   results: IMovie[];
+}
+
+export function getMoviesLatest() {
+  return fetch(
+    `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getMoviesTopRated() {
+  return fetch(
+    `${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getMoviesUpcoming() {
+  return fetch(
+    `${BASE_PATH}/movie/upcoming?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
 }
 
 export function getTvs() {
