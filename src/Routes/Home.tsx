@@ -28,7 +28,7 @@ const Loader = styled.div`
 
 function Home() {
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movie/:movieId");
 
   const { data: dataLatest, isLoading: isLoadingLatest } =
     useQuery<IGetVideosResult>(["movies", "Latest"], getMoviesLatest);
@@ -43,7 +43,7 @@ function Home() {
 
   const onBoxClicked = (movieId: number, rowIndex: number) => {
     setRowIndex(rowIndex);
-    history.push(`/movies/${movieId}`);
+    history.push(`/movie/${movieId}`);
   };
 
   return (
@@ -52,7 +52,7 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner video={dataLatest?.results[0] as IVideo}></Banner>
+          <Banner video={dataLatest?.results[0] as IVideo} from="home"></Banner>
           <Slider
             title="Latest Movies"
             from="home"
@@ -82,6 +82,7 @@ function Home() {
                 movieId={Number(bigMovieMatch?.params.movieId)}
                 rowIndex={rowIndex}
                 from="home"
+                key={Number(bigMovieMatch?.params.movieId)}
               />
             ) : null}
           </AnimatePresence>

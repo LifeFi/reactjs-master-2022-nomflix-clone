@@ -1,7 +1,14 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { AnimatePresence } from "framer-motion";
-import { getTvs, IGetVideosResult, IVideo } from "../api";
+import {
+  getTvsLatestShows,
+  getTvsArirangToday,
+  getTvsPopular,
+  getTvsTopRated,
+  IGetVideosResult,
+  IVideo,
+} from "../api";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Banner from "../Components/Banner";
@@ -25,16 +32,16 @@ function Tv() {
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/tv/:movieId");
 
   const { data: dataLatestShows, isLoading: isLoadingLatestShows } =
-    useQuery<IGetVideosResult>(["tvs", "LatestShows"], getTvs);
+    useQuery<IGetVideosResult>(["tvs", "LatestShows"], getTvsLatestShows);
 
   const { data: dataArirangToday, isLoading: isLoadingArirangToday } =
-    useQuery<IGetVideosResult>(["tvs", "LatestShows"], getTvs);
+    useQuery<IGetVideosResult>(["tvs", "ArirangToday"], getTvsArirangToday);
 
   const { data: dataPopular, isLoading: isLoadingPopular } =
-    useQuery<IGetVideosResult>(["tvs", "Popular"], getTvs);
+    useQuery<IGetVideosResult>(["tvs", "Popular"], getTvsPopular);
 
   const { data: dataTopRated, isLoading: isLoadingTopRated } =
-    useQuery<IGetVideosResult>(["tvs", "TopRated"], getTvs);
+    useQuery<IGetVideosResult>(["tvs", "TopRated"], getTvsTopRated);
 
   const [rowIndex, setRowIndex] = useState<number | null>(null);
 
@@ -52,7 +59,10 @@ function Tv() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner video={dataLatestShows?.results[0] as IVideo}></Banner>
+          <Banner
+            video={dataLatestShows?.results[0] as IVideo}
+            from="tv"
+          ></Banner>
           <Slider
             title="Latest Shows"
             from="tv"
@@ -90,6 +100,7 @@ function Tv() {
                 tvId={Number(bigMovieMatch?.params.movieId)}
                 rowIndex={rowIndex}
                 from="tv"
+                key={Number(bigMovieMatch?.params.movieId)}
               />
             ) : null}
           </AnimatePresence>

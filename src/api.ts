@@ -11,13 +11,36 @@ export interface IVideo {
   media_type: string;
 }
 
-export interface IMovie {
+interface IMovieGenres {
+  id: number;
+  name: string;
+}
+export interface IMovieDetail {
   id: number;
   backdrop_path: string;
   poster_path: string;
-  title: string;
+  title?: string;
   overview: string;
   media_type: string;
+  runtime?: number;
+  genres: IMovieGenres[];
+  popularity: number;
+  release_date?: string;
+  tagline: string;
+  vote_average: number;
+  vote_count: number;
+}
+
+export interface ITvDetail extends IMovieDetail {
+  name: string;
+  seasons: {
+    air_date: string;
+    id: number;
+    name: string;
+    overview: string;
+    poster_path: string;
+    season_number: number;
+  }[];
 }
 
 export interface IGetVideosResult {
@@ -36,14 +59,6 @@ export interface IGetMoviesResult {
   results: IVideo[];
   total_pages: number;
   total_results: number;
-}
-
-export interface ITv {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  name: string;
-  overview: string;
 }
 
 export interface IGetTvsResult {
@@ -82,9 +97,27 @@ export function getMovie(id: number) {
   ).then((response) => response.json());
 }
 
-export function getTvs() {
+export function getTvsLatestShows() {
+  return fetch(
+    `${BASE_PATH}/tv/on_the_air?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getTvsArirangToday() {
+  return fetch(
+    `${BASE_PATH}/tv/airing_today?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getTvsPopular() {
   return fetch(
     `${BASE_PATH}/tv/popular?api_key=${API_KEY}&region=KR&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getTvsTopRated() {
+  return fetch(
+    `${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&region=KR&language=ko-KR`
   ).then((response) => response.json());
 }
 

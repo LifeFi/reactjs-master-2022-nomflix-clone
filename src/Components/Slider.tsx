@@ -4,7 +4,7 @@ import { makeImagePath, useWindowDimensions } from "../utils";
 import { useState } from "react";
 import { IGetVideosResult } from "../api";
 
-const SliderWrapper = styled.div`
+const SliderWrapper = styled(motion.div)`
   position: relative;
   top: -230px;
   margin-bottom: 12.5vw;
@@ -39,9 +39,9 @@ const Row = styled(motion.div)`
   padding: 0px 3vw;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bghpoto: string }>`
   background-color: white;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: url(${(props) => props.bghpoto});
   background-size: cover;
   background-position: center center;
   height: 10vw;
@@ -61,10 +61,10 @@ const boxVariants = {
   },
   hover: {
     scale: 1.3,
-    y: -80,
+    y: -35,
     transition: {
-      delay: 0.5,
-      duaration: 0.1,
+      delay: 0.2,
+      duaration: 0.05,
       type: "tween",
     },
   },
@@ -122,8 +122,8 @@ const infoVariants = {
   hover: {
     opacity: 1,
     transition: {
-      delay: 0.5,
-      duaration: 0.1,
+      delay: 0.2,
+      duaration: 0.05,
       type: "tween",
     },
   },
@@ -194,25 +194,25 @@ function Slider({ data, title, from, rowIndex, onBoxClicked }: ISliderProps) {
           {data?.results
             .slice(rowIndex === 0 ? 1 : 0) // rowIndex 1인지에 따라서 분기한다. or 미리 바깥에서 잘라서 보낸다.
             .slice(offset * index[rowIndex], offset * index[rowIndex] + offset)
-            .map((movie) => (
+            .map((video) => (
               <Box
-                layoutId={movie.id + "_" + rowIndex}
-                key={movie.id}
+                layoutId={video.id + "_" + rowIndex}
+                key={video.id + "_" + rowIndex}
                 whileHover="hover"
                 initial="normal"
                 variants={boxVariants}
-                onClick={() => onBoxClicked(movie.id, rowIndex)}
+                onClick={() => onBoxClicked(video.id, rowIndex)}
                 transition={{ type: "tween" }}
-                bgPhoto={
-                  movie.backdrop_path
-                    ? makeImagePath(movie.backdrop_path, "w500")
-                    : movie.poster_path
-                    ? makeImagePath(movie.poster_path, "w500")
-                    : "/../assets/no-image-icon-6.png"
+                bghpoto={
+                  video.backdrop_path
+                    ? makeImagePath(video.backdrop_path, "w500")
+                    : video.poster_path
+                    ? makeImagePath(video.poster_path, "w500")
+                    : require("../assets/no-image-icon-6.png")
                 }
               >
                 <Info variants={infoVariants}>
-                  <h4>{movie.title}</h4>
+                  <h4>{video.title || video.name}</h4>
                 </Info>
               </Box>
             ))}

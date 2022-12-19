@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { useLocation, useHistory, useRouteMatch } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";
 import { ISearchResult, searchAll } from "../api";
@@ -29,9 +29,9 @@ const BoxContainer = styled.div`
   padding: 60px;
   gap: 10px;
 `;
-const Box = styled(motion.div)<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bghpoto: string }>`
   height: 200px;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: url(${(props) => props.bghpoto});
   background-size: cover;
   background-position: center center;
   margin-bottom: 20px;
@@ -84,10 +84,10 @@ const boxVariants = {
   },
   hover: {
     scale: 1.3,
-    y: -30,
+    y: -35,
     zIndex: 99,
     transition: {
-      delay: 0.5,
+      delay: 0.2,
       duration: 0.3,
       type: "tween",
     },
@@ -97,15 +97,12 @@ const infoVariants = {
   hover: {
     opacity: 1,
     transition: {
-      delay: 0.5,
+      delay: 0.2,
       duration: 0.3,
       type: "tween",
     },
   },
 };
-// interface SearchProps {
-//   search: string;
-// }
 
 const Search = () => {
   const history = useHistory();
@@ -114,11 +111,6 @@ const Search = () => {
   const id = new URLSearchParams(location.search).get("id");
   const [type, setType] = useState("");
 
-  // const movieMatch = useRouteMatch<{ movieId: string }>(
-  //   "/search/movies/:movieId"
-  // );
-  // const tvMatch = useRouteMatch<{ tvId: string }>("/search/tv/:tvId");
-
   const { data, isLoading } = useQuery<ISearchResult>(["search", keyword], () =>
     searchAll(keyword)
   );
@@ -126,14 +118,6 @@ const Search = () => {
   const onClickBox = (type: string, searchId: number) => {
     setType(type);
     history.push(`/search?keyword=${keyword}&type=${type}&id=${searchId}`);
-
-    // if (mediaType === "movie") {
-    //   history.push(`/search/movies/${searchId}?keyword=${keyword}`);
-    // } else if (mediaType === "tv") {
-    //   history.push(`/search/tv/${searchId}?keyword=${keyword}`);
-    // } else {
-    //   return;
-    // }
   };
 
   return (
@@ -142,7 +126,7 @@ const Search = () => {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <SearchTitle>{`Movie ${keyword} Search Results`}</SearchTitle>
+          <SearchTitle>{`Movie Search Results : ${keyword}`}</SearchTitle>
           <BoxContainer>
             {data?.results.map((search) => (
               <AnimatePresence>
@@ -152,17 +136,15 @@ const Search = () => {
                     whileHover="hover"
                     variants={boxVariants}
                     key={search.id}
-                    onClick={() => {
-                      onClickBox(search.media_type, search.id);
-                    }}
-                    bgPhoto={
+                    layoutId={search.id + "_" + 0}
+                    onClick={() => onClickBox(search.media_type, search.id)}
+                    bghpoto={
                       search.backdrop_path
                         ? makeImagePath(search.backdrop_path, "w500")
                         : search.poster_path
                         ? makeImagePath(search.poster_path, "w500")
                         : require("../assets/no-image-icon-6.png")
                     }
-                    layoutId={search.id + "_" + 0}
                   >
                     <MediaType>
                       <span>{search.media_type}</span>
@@ -176,7 +158,7 @@ const Search = () => {
             ))}
           </BoxContainer>
 
-          <SearchTitle>{`Tv Show ${keyword} Search Results`}</SearchTitle>
+          <SearchTitle>{`Tv Show Search Results : ${keyword}`}</SearchTitle>
           <BoxContainer>
             {data?.results.map((search) => (
               <AnimatePresence>
@@ -186,17 +168,15 @@ const Search = () => {
                     whileHover="hover"
                     variants={boxVariants}
                     key={search.id}
-                    onClick={() => {
-                      onClickBox(search.media_type, search.id);
-                    }}
-                    bgPhoto={
+                    layoutId={search.id + "_" + 1}
+                    onClick={() => onClickBox(search.media_type, search.id)}
+                    bghpoto={
                       search.backdrop_path
                         ? makeImagePath(search.backdrop_path, "w500")
                         : search.poster_path
                         ? makeImagePath(search.poster_path, "w500")
                         : require("../assets/no-image-icon-6.png")
                     }
-                    layoutId={search.id + "_" + 1}
                   >
                     <MediaType>
                       <span>{search.media_type}</span>
@@ -213,35 +193,20 @@ const Search = () => {
             {!id ? null : type === "movie" ? (
               <MovieDetail
                 movieId={Number(id)}
+                key={Number(id)}
                 rowIndex={0}
-                keyword={keyword + ""}
                 from="search"
+                keyword={keyword + ""}
               />
             ) : type === "tv" ? (
               <TvDetail
                 tvId={Number(id)}
-                rowIndex={1}
-                keyword={keyword + ""}
-                from="search"
-              />
-            ) : null}
-
-            {/* {movieMatch ? (
-              <MovieDetail
-                movieId={Number(movieMatch?.params.movieId)}
-                rowIndex={0}
-                from="search"
-                keyword={keyword + ""}
-              />
-            ) : null}
-            {tvMatch ? (
-              <TvDetail
-                tvId={Number(tvMatch?.params.tvId)}
+                key={Number(id)}
                 rowIndex={1}
                 from="search"
                 keyword={keyword + ""}
               />
-            ) : null} */}
+            ) : null}
           </AnimatePresence>
         </>
       )}
