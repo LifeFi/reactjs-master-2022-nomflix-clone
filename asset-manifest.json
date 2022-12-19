@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/reactjs-master-2022-nomflix-clone/static/js/main.96a13b12.js",
+    "main.js": "/reactjs-master-2022-nomflix-clone/static/js/main.03d710af.js",
     "index.html": "/reactjs-master-2022-nomflix-clone/index.html",
-    "main.96a13b12.js.map": "/reactjs-master-2022-nomflix-clone/static/js/main.96a13b12.js.map"
+    "main.03d710af.js.map": "/reactjs-master-2022-nomflix-clone/static/js/main.03d710af.js.map"
   },
   "entrypoints": [
-    "static/js/main.96a13b12.js"
+    "static/js/main.03d710af.js"
   ]
 }
